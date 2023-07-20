@@ -1,0 +1,25 @@
+server:
+  port: 9090
+
+# By-default the userName is 'user' and password we will get in logs when application will start but we
+# can provide the userName and password from application.yaml file also but not recommended remember.
+spring:
+  security:
+    user:
+      name: ${userName:ayush}
+      password: ${password:guptaji}
+
+user1:
+  name: ${user1Name}
+  pass: ${user1Pass}
+  role: ${user1Role}
+
+user2:
+  name: ${user2Name}
+  pass: ${user2Pass}
+  role: ${user2Role}
+
+user3:
+  name: ${user3Name}
+  pass: ${user3Pass}
+  role: ${user3Role}
