@@ -4,10 +4,20 @@ server:
 # By-default the userName is 'user' and password we will get in logs when application will start but we
 # can provide the userName and password from application.yaml file also but not recommended remember.
 spring:
-  security:
-    user:
-      name: ${userName:ayush}
-      password: ${password:guptaji}
+#  security:
+#    user:
+#      name: ${userName:ayush}
+#      password: ${password:guptaji}
+  datasource:
+    url: jdbc:postgresql://localhost:5432/security_db
+    username: postgres
+    password: ${db_pass}
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
 
 user1:
   name: ${user1Name}
