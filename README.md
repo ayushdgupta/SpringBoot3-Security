@@ -85,9 +85,94 @@ implementation 'org.springframework.boot:spring-boot-starter-security'
    4. so after fetching the userDetails from DB we need to send it but the return type of method 
       'loadUserByUsername(String username)' is '**UserDetails**' and 'UserDetails' is an interface which provides
       'userName', 'password', 'roles or authorities' etc. to the authentication provider to authenticate the user.
-   5. So we need to create another class which will implement 'UserDetails' interface and we need to convert our
+   5. So we need to create another class which will implement 'UserDetails' interface, and we need to convert our
       object (contains userInfo. fetched from DB) type into that class.
    6. In our case '**UserSecurityInfoUserDetailsConverter**' is doing this.
+   7. So to fetch Users from DB first we need to store them into our DB, so we need to create one separate controller
+      to store the users into our DB.
+   8. While storing userInfo into our DB we will not store password directly, we will encrypt it. Right now we are 
+      using 'BCryptPasswordEncoder' for which we created one bean in our config bt we can use any other as well.
+   9. If we use DB User then we need to create one bean for '**AuthenticationProvider**' in which we will provide
+      the name of our 'userDetailsService' class and the 'passwordEncoder'.
+   ```
+   @Bean
+   public AuthenticationProvider authenticationProvider() {
+     DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+     daoAuthenticationProvider.setUserDetailsService(userDetailsService());
+     daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
+     return daoAuthenticationProvider;
+   }
+   ```
+
+7. By Adding spring security dependency in our code by default security will be applied on each and every endpoint
+   of the code (i.e. if we want to access any endpoint then we need to provide certain creds).
+8. But if we want to customize it like creds should be provided for certain endpoints or for certain endpoints
+   'RBAC (Role Based Access Control)' kind of functionalities we want to achieve then we need to create one bean
+   '**SecurityFilterChain()**' in our configuration part of the project.
+9. In the bean we can define configurations like which url we need to open for any user like public, for which URLs
+   we need to allow **authentication** and for which URLs we need to enable RBAC. e.g.
+```
+    // For In-Memory user's Security config
+    httpSecurity
+        .csrf(AbstractHttpConfigurer::disable)
+        .authorizeHttpRequests(
+            (authorizeHttpRequests) ->
+                authorizeHttpRequests
+                    .requestMatchers("/security/demo/publicMethod")
+                    .permitAll()
+                    .requestMatchers("/DbUserHandling/createNewUser")
+                    .hasRole(SecurityConstants.ROLE_HOKAGE)
+                    .requestMatchers("/DbUserHandling/getAllUser")
+                    .hasAnyRole(
+                        SecurityConstants.ROLE_HOKAGE,
+                        SecurityConstants.ROLE_JONIN,
+                        SecurityConstants.ROLE_CHUNIN)
+                    .requestMatchers("/security/demo/adminMethod")
+                    .hasRole(SecurityConstants.ROLE_JONIN)
+                    .anyRequest()
+                    .authenticated())
+        .formLogin(Customizer.withDefaults());
+        
+    // For DB user's Security config
+        httpSecurity
+            .csrf(AbstractHttpConfigurer::disable)
+            .authorizeHttpRequests(
+                (authorizeHttpRequests) ->
+                    authorizeHttpRequests
+                        .requestMatchers("/security/demo/publicMethod")
+                        .permitAll()
+                        .requestMatchers("/DbUserHandling/createNewUser")
+                        .hasAuthority(SecurityConstants.ROLE_HOKAGE)
+                        .requestMatchers("/DbUserHandling/getAllUser")
+                        .hasAnyAuthority(
+                            SecurityConstants.ROLE_HOKAGE,
+                            SecurityConstants.ROLE_JONIN,
+                            SecurityConstants.ROLE_CHUNIN)
+                        .requestMatchers("/security/demo/adminMethod")
+                        .hasAuthority(SecurityConstants.ROLE_JONIN)
+                        .anyRequest()
+                        .authenticated())
+            .formLogin(Customizer.withDefaults());    
+```
+10. We have two configurations one is for In-Memory users and the other is for DB Users and the differnce b/w them
+    is of only 'hasRole()' and 'hasAuthorith()' so let's understand the config and the difference -
+      1. So first we disable the CSRF Attack (A very Common attack).
+      2. Second we tell spring-boot that if you get any request then check if it matches --
+         1. '/security/demo/publicMethod' then don't authenticate allow all the traffic.
+         2. '/DbUserHandling/createNewUser' then authenticate the user (check login id and pass) and authorise the
+            user with the 'HOKAGE' role (check user which logged in is HOKAGE or not if not then don't allow him).
+         3. '/DbUserHandling/getAllUser' authenticate the user and check the corresponding allowed roles.
+         4. '/security/demo/adminMethod' authenticate the user and check the role if 'JONIN' then allowed or else 
+            NO.
+         5. Apart from the above request if we get any request to our project then only **authenticate but not
+            authorized it** like '/actuator'.
+      3. So here if you see we use 'hasRole()' for memory and 'hasAuthority()' for DB but it's not like that we can
+         use any syntax for anyone, only thing we need to take care is if we are using 'hasAuthority()' then we can
+         store roles in our DB directly like 'HOKAGE', 'JONIN' etc. but when we use 'hasRole()' then we need to store
+         our roles with prefix 'ROLE_' e.g. 'ROLE_HOKAGE', 'ROLE_JONIN'. because when we provide role values in our
+         config then 'hasRole()' automatically append 'ROLE_' in the roles for checking internally but mostly
+         'hasAuthority()' did n't if 'hasAuthority()' also do this but it handle everything internally so no need
+         for us to take care of this.
 
 
 
