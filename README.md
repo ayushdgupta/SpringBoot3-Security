@@ -173,7 +173,32 @@ implementation 'org.springframework.boot:spring-boot-starter-security'
          config then 'hasRole()' automatically append 'ROLE_' in the roles for checking internally but mostly
          'hasAuthority()' did n't if 'hasAuthority()' also do this but it handle everything internally so no need
          for us to take care of this.
+11. In above configuration we have defined all the security related stuff but that's not the only way we can define  
+    'Roles' or 'Authorities' directly on our API's itself. For that we need to follow below config -
+```
+ when we need to provide security on our API's Directly not from configuration.
+ @Bean
+  public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity                                          (for method level security)
+            .csrf(AbstractHttpConfigurer::disable)
+            .authorizeHttpRequests(
+                (authorizeHttpRequests) -> authorizeHttpRequests.anyRequest().authenticated())
+            .formLogin(Customizer.withDefaults());
+            return httpSecurity.build();
+  }
+```
+12. Apart from the above config we need to annotate our config class which contain 'SecurityFilterChain' bean with
+    '**@EnableMethodSecurity**', after this we can apply security on method level in a follwong manner -
+```
+  @GetMapping("/adminMethod")
+  @PreAuthorize("hasRole('Hokage')") or @PreAuthorize("hasAuthority('Role_Hokage')")      (for method level security)
+  public ResponseEntity<?> adminUser() {
+    return new ResponseEntity<>("Method for Admin User", HttpStatus.OK);
+  }
+```
 
+## Flow Diagram of Spring Security (How it actually works)
+![Spring security Flow Diagram](src/main/resources/images/SpringSecurity.png)
 
 
 https://stackoverflow.com/questions/57247649/multiple-roles-using-preauthorize

@@ -110,12 +110,12 @@ public class SecurityConfig {
                         .authenticated())
             .formLogin(Customizer.withDefaults());
 
-    // when we need to provide security on our API's Directly not from configuration.
-    //    httpSecurity                                          (for method level security)
-    //        .csrf(AbstractHttpConfigurer::disable)
-    //        .authorizeHttpRequests(
-    //            (authorizeHttpRequests) -> authorizeHttpRequests.anyRequest().authenticated())
-    //        .formLogin(Customizer.withDefaults());
+//     when we need to provide security on our API's Directly not from configuration.
+//        httpSecurity                                          (for method level security)
+//            .csrf(AbstractHttpConfigurer::disable)
+//            .authorizeHttpRequests(
+//                (authorizeHttpRequests) -> authorizeHttpRequests.anyRequest().authenticated())
+//            .formLogin(Customizer.withDefaults());
     return httpSecurity.build();
   }
 
