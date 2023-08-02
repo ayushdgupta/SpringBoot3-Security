@@ -156,7 +156,10 @@ implementation 'org.springframework.boot:spring-boot-starter-security'
 ```
 10. We have two configurations one is for In-Memory users and the other is for DB Users and the differnce b/w them
     is of only 'hasRole()' and 'hasAuthorith()' so let's understand the config and the difference -
-      1. So first we disable the CSRF Attack (A very Common attack).
+      1. So first we disable the CSRF by default it is enabled in spring security but we need to create POST
+         request to create user in our DB and if we will not disable CSRF then it'll not allow us to make
+         POST request directly we need to provide some token kind of configuration in our request so that's the
+         separate thing i've not explored it now so disabled that.
       2. Second we tell spring-boot that if you get any request then check if it matches --
          1. '/security/demo/publicMethod' then don't authenticate allow all the traffic.
          2. '/DbUserHandling/createNewUser' then authenticate the user (check login id and pass) and authorise the

@@ -91,8 +91,9 @@ public class SecurityConfig {
 
     // For DB user's Security config
     // CSRF protection is enabled and it uses 'Synchronizer Token Pattern' technique to resolve the
-    // CSRF issue by default. So generally we should not disable it, but here we are learning things
-    // so no issues.
+    // CSRF issue by default. So generally we should not disable it, but here we are creating few users
+    // in our DB (using POST request) so if we will not disable CSRF then it'll not allow to make that
+    // POST request.
     httpSecurity
         .csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(
