@@ -200,5 +200,37 @@ implementation 'org.springframework.boot:spring-boot-starter-security'
 ## Flow Diagram of Spring Security (How it actually works)
 ![Spring security Flow Diagram](src/main/resources/images/SpringSecurity.png)
 
+1. First of all whenever our endpoints/API will be hit and spring security is enabled then the request will be 
+   intercepted by the chain of Servlet filters or Authentication Filters in the filter chain instead of directly 
+   intercept by the Dispatcher servlet.
+   ![Spring security servlet filters Flow Diagram](src/main/resources/images/Servlet filter.png)
+2. Our input request will pass through every filter where one of the filter is 
+   '**UsernamePasswordAuthenticationFilter**' which will generate a '**UsernamePasswordAuthenticationToken**'
+   using the username and password provided by the user. The UsernamePasswordAuthenticationToken is an 
+   implementation of the '**Authentication interface**' and used when a user wants to authenticate using a 
+   username and password.
+3. The '**UsernamePasswordAuthenticationToken**' is passed to the '**AuthenticationManager**' so that the token 
+   can be authenticated.
+   ![Spring security userNamePasswordAuthenticationToken Flow Diagram](src/main/resources/images/AuthenticationFlow.png)
+4. The '**AuthenticationManager**' delegates the authentication to the appropriate '**AuthenticationProvider**'.
+5.  The AuthenticationProvider calls the '**loadUserByUsername(username)**' method of the '**UserDetailsService**' 
+    and gets back the '**UserDetails**' object containing all the data of the user. The most important data is the 
+    password because it will be used to check whether the provided password is correct. If no user is found with 
+    the given user name, a UsernameNotFoundException is thrown.
+6. The AuthenticationProvider after receiving the UserDetails checks the passwords and authenticates the user. 
+   FINALLY!!! . If the passwords do not match it throws a AuthenticationException. However, if the authentication 
+   is successful, a '**UsernamePasswordAuthenticationToken**' is created, and the fields '**principal, credentials,
+   and authenticated**' are set to appropriate values . Here principal refers to your username or the UserDetails ,
+   credentials refers to password and the authenticated field is set to true. This token is returned back to the 
+   AuthenticationManager.
+7. On successful authentication, the '**SecurityContext**' is updated with the details of the current authenticated 
+   user. SecurityContext can be used in several parts of the app to check whether any user is currently 
+   authenticated and if so, what are the user’s details.
 
-https://stackoverflow.com/questions/57247649/multiple-roles-using-preauthorize
+## IMP Links
+1. https://medium.com/geekculture/spring-security-authentication-process-authentication-flow-behind-the-scenes-d56da63f04fa#:~:text=Step%202%20%3A%20A%20UsernamePasswordAuthenticationToken%20is,using%20a%20username%20and%20password.
+2. https://medium.com/@er.rameshkatiyar/top-10-core-components-of-spring-security-52370be2c585
+3. https://docs.spring.io/spring-boot/docs/2.0.0.M4/reference/html/boot-features-security.html#:~:text=If%20Spring%20Security%20is%20on,EnableGlobalMethodSecurity%20with%20your%20desired%20settings.
+4. https://stackoverflow.com/questions/57247649/multiple-roles-using-preauthorize
+5. https://reflectoring.io/complete-guide-to-csrf/ -- CSRF Attack
+6. https://reflectoring.io/spring-csrf/ -- CSRF Protection in spring boot

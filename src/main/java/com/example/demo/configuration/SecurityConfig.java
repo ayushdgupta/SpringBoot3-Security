@@ -68,54 +68,57 @@ public class SecurityConfig {
     // '/security/demo/'.
     // 4-> Here we provided security for all the API's in our project.
 
-//     For In-Memory user's Security config
-//    httpSecurity
-//        .csrf(AbstractHttpConfigurer::disable)
-//        .authorizeHttpRequests(
-//            (authorizeHttpRequests) ->
-//                authorizeHttpRequests
-//                    .requestMatchers("/security/demo/publicMethod")
-//                    .permitAll()
-//                    .requestMatchers("/DbUserHandling/createNewUser")
-//                    .hasRole(SecurityConstants.ROLE_HOKAGE)
-//                    .requestMatchers("/DbUserHandling/getAllUser")
-//                    .hasAnyRole(
-//                        SecurityConstants.ROLE_HOKAGE,
-//                        SecurityConstants.ROLE_JONIN,
-//                        SecurityConstants.ROLE_CHUNIN)
-//                    .requestMatchers("/security/demo/adminMethod")
-//                    .hasRole(SecurityConstants.ROLE_JONIN)
-//                    .anyRequest()
-//                    .authenticated())
-//        .formLogin(Customizer.withDefaults());
+    //     For In-Memory user's Security config
+    //    httpSecurity
+    //        .csrf(AbstractHttpConfigurer::disable)
+    //        .authorizeHttpRequests(
+    //            (authorizeHttpRequests) ->
+    //                authorizeHttpRequests
+    //                    .requestMatchers("/security/demo/publicMethod")
+    //                    .permitAll()
+    //                    .requestMatchers("/DbUserHandling/createNewUser")
+    //                    .hasRole(SecurityConstants.ROLE_HOKAGE)
+    //                    .requestMatchers("/DbUserHandling/getAllUser")
+    //                    .hasAnyRole(
+    //                        SecurityConstants.ROLE_HOKAGE,
+    //                        SecurityConstants.ROLE_JONIN,
+    //                        SecurityConstants.ROLE_CHUNIN)
+    //                    .requestMatchers("/security/demo/adminMethod")
+    //                    .hasRole(SecurityConstants.ROLE_JONIN)
+    //                    .anyRequest()
+    //                    .authenticated())
+    //        .formLogin(Customizer.withDefaults());
 
     // For DB user's Security config
-        httpSecurity
-            .csrf(AbstractHttpConfigurer::disable)
-            .authorizeHttpRequests(
-                (authorizeHttpRequests) ->
-                    authorizeHttpRequests
-                        .requestMatchers("/security/demo/publicMethod")
-                        .permitAll()
-                        .requestMatchers("/DbUserHandling/createNewUser")
-                        .hasAuthority(SecurityConstants.ROLE_HOKAGE)
-                        .requestMatchers("/DbUserHandling/getAllUser")
-                        .hasAnyAuthority(
-                            SecurityConstants.ROLE_HOKAGE,
-                            SecurityConstants.ROLE_JONIN,
-                            SecurityConstants.ROLE_CHUNIN)
-                        .requestMatchers("/security/demo/adminMethod")
-                        .hasAuthority(SecurityConstants.ROLE_JONIN)
-                        .anyRequest()
-                        .authenticated())
-            .formLogin(Customizer.withDefaults());
+    // CSRF protection is enabled and it uses 'Synchronizer Token Pattern' technique to resolve the
+    // CSRF issue by default. So generally we should not disable it, but here we are learning things
+    // so no issues.
+    httpSecurity
+        .csrf(AbstractHttpConfigurer::disable)
+        .authorizeHttpRequests(
+            (authorizeHttpRequests) ->
+                authorizeHttpRequests
+                    .requestMatchers("/security/demo/publicMethod")
+                    .permitAll()
+                    .requestMatchers("/DbUserHandling/createNewUser")
+                    .hasAuthority(SecurityConstants.ROLE_HOKAGE)
+                    .requestMatchers("/DbUserHandling/getAllUser")
+                    .hasAnyAuthority(
+                        SecurityConstants.ROLE_HOKAGE,
+                        SecurityConstants.ROLE_JONIN,
+                        SecurityConstants.ROLE_CHUNIN)
+                    .requestMatchers("/security/demo/adminMethod")
+                    .hasAuthority(SecurityConstants.ROLE_JONIN)
+                    .anyRequest()
+                    .authenticated())
+        .formLogin(Customizer.withDefaults());
 
-//     when we need to provide security on our API's Directly not from configuration.
-//        httpSecurity                                          (for method level security)
-//            .csrf(AbstractHttpConfigurer::disable)
-//            .authorizeHttpRequests(
-//                (authorizeHttpRequests) -> authorizeHttpRequests.anyRequest().authenticated())
-//            .formLogin(Customizer.withDefaults());
+    //     when we need to provide security on our API's Directly not from configuration.
+    //        httpSecurity                                          (for method level security)
+    //            .csrf(AbstractHttpConfigurer::disable)
+    //            .authorizeHttpRequests(
+    //                (authorizeHttpRequests) -> authorizeHttpRequests.anyRequest().authenticated())
+    //            .formLogin(Customizer.withDefaults());
     return httpSecurity.build();
   }
 
@@ -124,33 +127,33 @@ public class SecurityConfig {
   // let's create some in-memory users with different roles
   // One thing when we will use inMemory users, the users from application.yaml file will not be
   // considered.
-//    @Bean
-//    public UserDetailsService userDetailsService() {
-//      UserDetails user1 =
-//          User.withUsername(user1Name)
-//              .password(passwordEncoder().encode(user1Pass))
-//              .roles(user1Role)
-//              .build();
-//
-//      UserDetails user2 =
-//          User.withUsername(user2Name)
-//              .password(passwordEncoder().encode(user2Pass))
-//              .roles(user2Role)
-//              .build();
-//
-//      UserDetails user3 =
-//          User.withUsername(user3Name)
-//              .password(passwordEncoder().encode(user3Pass))
-//              .roles(user3Role)
-//              .build();
-//
-//      InMemoryUserDetailsManager inMemoryUserDetailsManager = new InMemoryUserDetailsManager();
-//      inMemoryUserDetailsManager.createUser(user1);
-//      inMemoryUserDetailsManager.createUser(user2);
-//      inMemoryUserDetailsManager.createUser(user3);
-//
-//      return inMemoryUserDetailsManager;
-//    }
+  //    @Bean
+  //    public UserDetailsService userDetailsService() {
+  //      UserDetails user1 =
+  //          User.withUsername(user1Name)
+  //              .password(passwordEncoder().encode(user1Pass))
+  //              .roles(user1Role)
+  //              .build();
+  //
+  //      UserDetails user2 =
+  //          User.withUsername(user2Name)
+  //              .password(passwordEncoder().encode(user2Pass))
+  //              .roles(user2Role)
+  //              .build();
+  //
+  //      UserDetails user3 =
+  //          User.withUsername(user3Name)
+  //              .password(passwordEncoder().encode(user3Pass))
+  //              .roles(user3Role)
+  //              .build();
+  //
+  //      InMemoryUserDetailsManager inMemoryUserDetailsManager = new InMemoryUserDetailsManager();
+  //      inMemoryUserDetailsManager.createUser(user1);
+  //      inMemoryUserDetailsManager.createUser(user2);
+  //      inMemoryUserDetailsManager.createUser(user3);
+  //
+  //      return inMemoryUserDetailsManager;
+  //    }
 
   // Below configuration is for DB-User
   @Bean
