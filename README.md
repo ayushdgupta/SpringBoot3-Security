@@ -160,7 +160,22 @@ implementation 'org.springframework.boot:spring-boot-starter-security'
          request to create user in our DB and if we will not disable CSRF then it'll not allow us to make
          POST request directly we need to provide some token kind of configuration in our request so that's the
          separate thing i've not explored it now so disabled that.
-      2. Second we tell spring-boot that if you get any request then check if it matches --
+      2. But still if we don't want to disable the csrf for all of our APIs and we want to HIT our POST endpoint
+         then we can disable the CSRF check for that corresponding endpoint like below -
+         ```
+          @Bean
+          public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+            httpSecurity
+            .csrf(
+                  httpSecurityCsrfConfigurer ->
+                  httpSecurityCsrfConfigurer.ignoringRequestMatchers("/DbUserHandling/createNewUser"))
+                  .authorizeHttpRequests(
+                  authorizeHttpRequest -> authorizeHttpRequest.anyRequest().authenticated())
+                  .formLogin(Customizer.withDefaults());
+                  return httpSecurity.build();
+            }
+         ```
+      3. Second we tell spring-boot that if you get any request then check if it matches --
          1. '/security/demo/publicMethod' then don't authenticate allow all the traffic.
          2. '/DbUserHandling/createNewUser' then authenticate the user (check login id and pass) and authorise the
             user with the 'HOKAGE' role (check user which logged in is HOKAGE or not if not then don't allow him).
@@ -169,7 +184,7 @@ implementation 'org.springframework.boot:spring-boot-starter-security'
             NO.
          5. Apart from the above request if we get any request to our project then only **authenticate but not
             authorized it** like '/actuator'.
-      3. So here if you see we use 'hasRole()' for memory and 'hasAuthority()' for DB but it's not like that we can
+      4. So here if you see we use 'hasRole()' for memory and 'hasAuthority()' for DB but it's not like that we can
          use any syntax for anyone, only thing we need to take care is if we are using 'hasAuthority()' then we can
          store roles in our DB directly like 'HOKAGE', 'JONIN' etc. but when we use 'hasRole()' then we need to store
          our roles with prefix 'ROLE_' e.g. 'ROLE_HOKAGE', 'ROLE_JONIN'. because when we provide role values in our
@@ -237,3 +252,5 @@ implementation 'org.springframework.boot:spring-boot-starter-security'
 4. https://stackoverflow.com/questions/57247649/multiple-roles-using-preauthorize
 5. https://reflectoring.io/complete-guide-to-csrf/ -- CSRF Attack
 6. https://reflectoring.io/spring-csrf/ -- CSRF Protection in spring boot
+7. https://docs.spring.io/spring-security/site/docs/5.0.x/reference/html/csrf.html#csrf-configure -- CSRF configurations
+8. https://stackoverflow.com/questions/76817637/spring-security?noredirect=1#comment135424210_76817637 -- Question on CSRF on stackoverflow (I've asked)
