@@ -254,3 +254,4 @@ implementation 'org.springframework.boot:spring-boot-starter-security'
 6. https://reflectoring.io/spring-csrf/ -- CSRF Protection in spring boot
 7. https://docs.spring.io/spring-security/site/docs/5.0.x/reference/html/csrf.html#csrf-configure -- CSRF configurations
 8. https://stackoverflow.com/questions/76817637/spring-security?noredirect=1#comment135424210_76817637 -- Question on CSRF on stackoverflow (I've asked)
+9. https://docs.spring.io/spring-security/reference/servlet/exploits/csrf.html#csrf-integration-javascript -- CSRF Documentation
